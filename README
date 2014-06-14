@@ -1,0 +1,27 @@
+# Simple Secure Messaging Service:
+---------
+
+Stuff, uses Public Key Crypto
+
+# Server
+---------
+Models:
+ User -> Main Account
+ Device -> Code/Key/App
+ User-User -> User makes friends(?)
+ Message -> User Encrypted Message
+
+Procedure:
+ UserA request to send message to UserB
+ Server grants ok for message, sends down UserBPubKey
+ UserA Encrypts Message with UserBPubKey
+ UserA Encrypts Message again with ServerPubKey
+ UserA sends encrypted message to server
+ Server decrypte with ServerPrivateKey, store encrypted message for UserB
+ UserB receives encrypted message
+
+Basically SSL Handshaking
+
+# References
+----------
+kyleisom.net/downloads/crypto_intro.pdf
