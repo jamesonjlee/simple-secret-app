@@ -4,6 +4,8 @@ MarkupSafe==0.23
 SQLAlchemy==0.9.4
 Werkzeug==0.9.6
 itsdangerous==0.24
+pycrypto==2.6.1
 python-gnupg==0.3.6
+python-potr==1.0.0
 requests==2.3.0
 wsgiref==0.1.2

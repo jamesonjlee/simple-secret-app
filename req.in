@@ -1,3 +1,4 @@
 Flask==0.10.1
 SQLAlchemy==0.9.4
 python-gnupg==0.3.6
+python-potr==1.0.0
