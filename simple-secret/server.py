@@ -1,7 +1,9 @@
 from flask import Flask, json
 from flask.ext.sqlalchemy import SQLAlchemy
+import config
 
 app = Flask(__name__)
+app.config.from_object(config)
 db = SQLAlchemy(app)
 
 class Message(db.Model):
@@ -27,4 +29,4 @@ def add_message_by_sig(recipient_id):
     return 'OK', 200
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port='12345')
+    app.run(host='127.0.0.1', port=12345)
