@@ -49,3 +49,5 @@ include/
 local/
 src/
 gpg/
+simple-secret/*.db
+simple-secret/gpg
