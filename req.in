@@ -4,3 +4,4 @@ python-gnupg==0.3.6
 python-potr==1.0.0
 Flask-SQLAlchemy==1.0
 requests==2.3.0
+itsdangerous==0.24

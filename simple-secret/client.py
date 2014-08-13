@@ -9,7 +9,7 @@ class Client(object):
         self.host = "{host}:{port}".format(host=host, port=port)
         self.passphrase = passphrase
         self.gpg, self.fp = get_or_gen_gpg(passphrase)
-        self.server_fp = get_fp_from_gpg(self.gpg, Config.SERVER_FP)
+        self.server_fp = get_fp_from_gpg(self.gpg, Config.SERVER_KEY_ID)
         self.secret = generate_random_string()
         self.session = False
 
@@ -22,8 +22,7 @@ class Client(object):
 
     def _challenge_server(self):
         url = self.host + "/authenticate/{}".format(self.fp)
-        message = self._encrypt(self.secret, server_fp)
-
+        message = self._encrypt(self.secret, self.server_fp)
         response = request.post(url, data=payload)
         if response.ok:
             msg = json.loads(self._decrypt(response.text))
