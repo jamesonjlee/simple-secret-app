@@ -65,3 +65,17 @@ def get_fp_from_gpg(gpg, key_id):
             return key['fingerprint']
     else:
         return ''
+
+def gpg_encrypt(gpg, sender, message, recipient, passphrase):
+    encrypted_data = gpg.encrypt(
+        message,
+        recipients=[recipient],
+        sign=sender,
+        passphrase=passphrase)
+    return encrypted_data
+
+def gpg_decrypt(gpg, message, passphrase):
+    decrypted_data = gpg.decrypt(
+        str(encrypted_data),
+        passphrase=passphrase)
+    return decrypted_data
