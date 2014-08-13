@@ -4,8 +4,8 @@ import os
 import base64
 import urllib
 
-def generate_gpg_key(passphrase):
-    gpg = gnupg.GPG(gnupghome=config.GPG_HOME)
+def generate_gpg_key(passphrase, gpg_home):
+    gpg = gnupg.GPG(gnupghome=gpg_home)
 
     key_info = gen_key_info(
         gpg=gpg,
@@ -19,8 +19,8 @@ def generate_gpg_key(passphrase):
     self_fp = key.fingerprint
     return gpg, self_fp
 
-def get_gpg_key(passphrase):
-    gpg = gnupg.GPG(gnupghome=config.GPG_HOME)
+def get_gpg_key(passphrase, gpg_home):
+    gpg = gnupg.GPG(gnupghome=gpg_home)
     if not gpg.list_keys(secret=True):
         raise Exception('Probably bad passphrase')
     self_fp = gpg.list_keys(secret=True)[0]['fingerprint']
@@ -49,19 +49,19 @@ def print_decrypted_info(decrypted):
     print('Trust level: %s' % decrypted_data.trust_text)
     print('Data: %s' % decrypted)
 
-def get_or_gen_gpg(passphrase):
-    if os.path.isdir(config.GPG_HOME):
-        return get_gpg_key(passphrase)
+def get_or_gen_gpg(passphrase, gpg_home):
+    if os.path.isdir(gpg_home):
+        return get_gpg_key(passphrase, gpg_home)
     else:
-        return generate_gpg_key(passphrase)
+        return generate_gpg_key(passphrase, gpg_home)
 
 def generate_random_string(length=32):
     rand = os.urandom(length)
     return urllib.quote(base64.b64encode(rand))
 
-def get_fp_from_gpg(gpg, key_id):
+def get_fp_from_gpg(gpg, fp):
     for key in gpg.list_keys():
-        if key['key_id'] == key_id:
+        if key['fingerprint'] == fp:
             return key['fingerprint']
     else:
         return ''
@@ -76,6 +76,6 @@ def gpg_encrypt(gpg, sender, message, recipient, passphrase):
 
 def gpg_decrypt(gpg, message, passphrase):
     decrypted_data = gpg.decrypt(
-        str(encrypted_data),
+        str(message),
         passphrase=passphrase)
     return decrypted_data

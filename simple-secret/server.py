@@ -1,4 +1,4 @@
-from flask import Flask, json, g
+from flask import Flask, json, g, request
 from flask.ext.sqlalchemy import SQLAlchemy
 import config
 import util
@@ -34,20 +34,25 @@ def add_message_by_sig(recipient_id):
 
 @app.route('/authenticate/<string:recipient_id>', methods=['POST'])
 def authenticate_person(recipient_id):
-    key = util.gpg_decrypt(gpg, message=request.text, config.SERVER_PASSPHRASE)
+    key = util.gpg_decrypt(app.gpg, request.data, config.SERVER_PASSPHRASE)
     key2 = util.generate_random_string(32)
     body = {
-        'key': key,
+        'key': str(key),
         'key2': key2
     }
     msg = json.dumps(body)
-    server_fp = util.get_fp_from_gpg(config.SERVER_KEY_ID)
-    response = gpg_encrypt(gpg, server_fp, msg, recipient_id, config.SERVER_PASSPHRASE)
-    return response, 200
+    server_fp = util.get_fp_from_gpg(app.gpg, config.SERVER_KEY_FP)
+    encrypted = util.gpg_encrypt(
+        app.gpg,
+        server_fp,
+        msg,
+        recipient_id,
+        config.SERVER_PASSPHRASE)
+    return str(encrypted), 200
 
 @app.before_first_request
 def register_self_gpg(*arg, **kwargs):
-    app.gpg, app.fp = get_or_gen_gpg(passphrase)
+    app.gpg, app.fp = util.get_or_gen_gpg(passphrase, config.SERVER_GPG_HOME)
 
 if __name__ == '__main__':
     db.create_all()
