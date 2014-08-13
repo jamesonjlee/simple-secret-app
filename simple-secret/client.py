@@ -1,15 +1,15 @@
 from util import get_or_gen_gpg, generate_random_string
 import getpass
 import requests
+import config
 
-MESSAGE_HOST = 'http://127.0.0.1'
-MESSAGE_PORT = 12345
 
 class Client(object):
     def __init__(self, host, port, passphrase):
         self.host = "{host}:{port}".format(host=host, port=port)
         self.passphrase = passphrase
         self.gpg, self.fp = get_or_gen_gpg(passphrase)
+        self.server_fp = get_fp_from_gpg(self.gpg, Config.SERVER_FP)
         self.secret = generate_random_string()
         self.session = False
 
@@ -68,5 +68,5 @@ class Client(object):
 
 if __name__ == '__main__':
     passphrase = getpass.getpass(prompt = 'Passphrase: ')
-    client = Client(MESSAGE_HOST, MESSAGE_PORT, passphrase)
+    client = Client(config.MESSAGE_HOST, config.MESSAGE_PORT, passphrase)
     client.get_messages()
