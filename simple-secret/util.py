@@ -58,3 +58,10 @@ def get_or_gen_gpg(passphrase):
 def generate_random_string(length=32):
     rand = os.urandom(length)
     return urllib.quote(base64.b64encode(rand))
+
+def get_fp_from_gpg(gpg, key_id):
+    for key in gpg.list_keys():
+        if key['key_id'] == key_id:
+            return key['fingerprint']
+    else:
+        return ''
