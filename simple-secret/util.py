@@ -1,6 +1,8 @@
 import gnupg
 import config
 import os
+import base64
+import urllib
 
 def generate_gpg_key(passphrase):
     gpg = gnupg.GPG(gnupghome=config.GPG_HOME)
@@ -52,3 +54,7 @@ def get_or_gen_gpg(passphrase):
         return get_gpg_key(passphrase)
     else:
         return generate_gpg_key(passphrase)
+
+def generate_random_string(length=32):
+    rand = os.urandom(length)
+    return urllib.quote(base64.b64encode(rand))
