@@ -19,6 +19,15 @@ class Message(db.Model):
         self.recipient = recipient
         self.message = message
 
+class PubKey(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    fingerprint = db.Column(db.String(128), index=True, nullable=False)
+    pub_key = db.Column(db.Text, nullable=False)
+
+    def __init__(self, fingerprint, pub_key):
+        self.fingerprint = fingerprint
+        self.pub_key = pub_key
+
 @app.route('/message/<string:recipient_id>', methods=['GET'])
 def get_message_by_sig(recipient_id):
     messages = Message.query.filter(Message.recipient == recipient_id).all()
@@ -49,6 +58,21 @@ def authenticate_person(recipient_id):
         recipient_id,
         config.SERVER_PASSPHRASE)
     return str(encrypted), 200
+
+@app.route('/identify/<string:fingerprint>', methods=['GET'])
+def get_fingerprint_pub_key(fingerprint):
+    pub_key = PubKey.query.filter(PubKey.fingerprint==fingerprint).first()
+    if pub_key:
+        return pub_key.pub_key, '200'
+    else:
+        return 'Unknown Fingerprint', 404
+
+@app.route('/identify/<string:fingerprint>', methods=['POST'])
+def add_fingerprint_pub_key(fingerprint):
+    pub_key = PubKey(fingerprint, request.form.get('keyfile'))
+    db.session.add(pub_key)
+    db.session.commit()
+    return 'OK', 200
 
 @app.before_first_request
 def register_self_gpg(*arg, **kwargs):
