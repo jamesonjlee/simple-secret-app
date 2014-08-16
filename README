@@ -3,25 +3,18 @@
 
 Stuff, uses Public Key Crypto
 
-# Server
----------
-Models:
- User -> Main Account
- Device -> Code/Key/App
- User-User -> User makes friends(?)
- Message -> User Encrypted Message
+## Usage
+virtualenv, pip, etc.
 
-Procedure:
- UserA request to send message to UserB
- Server grants ok for message, sends down UserBPubKey
- UserA Encrypts Message with UserBPubKey
- UserA Encrypts Message again with ServerPubKey
- UserA sends encrypted message to server
- Server decrypte with ServerPrivateKey, store encrypted message for UserB
- UserB receives encrypted message
+### run the server:
+```
+python simple-secret/server.py
+```
 
-Basically SSL Handshaking
+### run the client
+```
+python simple-secret/client.py
+```
 
-# References
-----------
-kyleisom.net/downloads/crypto_intro.pdf
+### fyi
+you need to update the config.py to fix DB_URI, passphrase, and a generated server_key_fp (fingerprint for the shared gpg key)
