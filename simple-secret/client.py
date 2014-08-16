@@ -32,7 +32,6 @@ class Client(object):
                 self.session = True
                 return self.secret
         else:
-        #self.authenticate()
             raise Exception('Bad Server Authentication')
 
     def get_messages(self):
@@ -41,16 +40,16 @@ class Client(object):
         resp = requests.get(url, auth=(self.secret, ''))
         decrypted = []
         for message in resp.json():
-            decrypted.append(self._decrypt(message))
-        print decrypted
+            decrypted.append(str(self._decrypt(message)))
+        return decrypted
 
     def send_message(self, message):
         self._challenge_server()
         url = self.host + "/message/{}".format(self.fp)
         encrypted_message = self._encrypt(message, self.server_fp)
-        payload = json.dumps(encrypted_message)
-        resp = requests.post(url, payload=payload, auth=Basic(self.secret, ''))
-        print resp.json()
+        payload = {'message': str(encrypted_message)}
+        resp = requests.post(url, data=payload, auth=(self.secret, ''))
+        return resp.text
 
     def _encrypt(self, message, recipient):
         encrypted_data = util.gpg_encrypt(
@@ -72,4 +71,6 @@ class Client(object):
 if __name__ == '__main__':
     passphrase = getpass.getpass(prompt = 'Passphrase: ')
     client = Client(config.MESSAGE_HOST, config.MESSAGE_PORT, passphrase)
-    client.get_messages()
+    print client.get_messages()
+    print client.send_message('hello world')
+    print client.get_messages()

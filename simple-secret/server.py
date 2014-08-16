@@ -31,11 +31,11 @@ class PubKey(db.Model):
 @app.route('/message/<string:recipient_id>', methods=['GET'])
 def get_message_by_sig(recipient_id):
     messages = Message.query.filter(Message.recipient == recipient_id).all()
-    return json.dumps(messages), 200
+    return json.dumps([msg.message for msg in messages]), 200
 
 @app.route('/message/<string:recipient_id>', methods=['POST'])
 def add_message_by_sig(recipient_id):
-    message = request.get_json()
+    message = request.form.get('message')
     message = Message(recipient=recipient_id, message=message)
     db.session.add(message)
     db.session.commit()
